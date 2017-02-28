@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Flocking/Scenes/Flocking.unity
+- path: Assets/Boids/Scenes/Flocking.unity
   isLoaded: 1
   isActive: 1
