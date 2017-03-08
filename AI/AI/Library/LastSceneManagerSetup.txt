@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Boids/Scenes/Flocking.unity
+- path: Assets/ProceduralGeneration/MarchingSquares/MarchingSquares.unity
   isLoaded: 1
   isActive: 1
