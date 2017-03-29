@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Boids/Original/Scenes/Flocking.unity
+- path: Assets/ProceduralGeneration/CaveGeneration/Scenes/CaveGenerator.unity
   isLoaded: 1
   isActive: 1
