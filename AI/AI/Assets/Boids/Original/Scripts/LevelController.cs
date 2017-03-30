@@ -21,21 +21,22 @@ namespace SD.AI.Boids {
         private int levelScore = 0;
         private List<GameObject> walls = new List<GameObject>();
         private float timer = 0;
-        
+        private BoidsController boidsController;
 
         private void Start() {
+            boidsController = FindObjectOfType<BoidsController>();
             xMin = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width * 0.0f, 0)).x;
             xMax = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width * 1.0f, 0)).x;
             yMin = Camera.main.ScreenToWorldPoint(new Vector3(0, Screen.height * 0.0f)).y;
             yMax = Camera.main.ScreenToWorldPoint(new Vector3(0, Screen.height * 1.0f)).y;
-            
-       //     InvokeRepeating("SpawnWall", 0, spawnSpeed);
         }
 
         private void SpawnWall() {
 
+            gapSize = (boidsController.BoidsAlive * .5f);
             float s = UnityEngine.Random.Range(0, (xMax * 2) - gapSize);
             float r = (xMax * 2 - gapSize) - s;
+           
 
             GameObject wall = new GameObject("Wall");
             wall.transform.SetParent(transform);
@@ -60,11 +61,15 @@ namespace SD.AI.Boids {
             wall.transform.position = new Vector2(0, yMax + objectHeight);
             walls.Add(wall);
             levelScore++;
-            gapSize -= 0.10f;
+           
             CallBacks.IssueOnSurvived();
+
+            //y = x / (x + 4)
+
         }
 
         private void Update() {
+
             foreach (GameObject wall in walls) {
                 wall.transform.Translate((Vector3.down * Time.deltaTime) * speed);
             }
@@ -84,7 +89,6 @@ namespace SD.AI.Boids {
             timer -= Time.deltaTime;
 
             if(timer <= 0f) {
-                print("Time up");
                 timer = timeTillNextSpawn;
                 return true;
             }

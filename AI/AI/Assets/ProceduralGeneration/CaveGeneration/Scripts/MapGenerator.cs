@@ -29,7 +29,7 @@ public class MapGenerator : MonoBehaviour {
         map = new int[width, height];
         RandomFillMap();
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 10; i++) {
             SmoothMap();
         }
 
@@ -55,16 +55,19 @@ public class MapGenerator : MonoBehaviour {
     private void SmoothMap() {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
+                //Check how many neighbour tiles are walls
                 int neighbourWallTiles = GetSurroundingWallCount(x, y);
 
+                // if there are more than 4 walls surrounding the tile
                 if (neighbourWallTiles > 4)
                     map[x, y] = 1;
+                // if there are less
                 else if (neighbourWallTiles < 4)
                     map[x, y] = 0;
             }
         }
     }
-
+    //Check how many neighbour tiles are walls
     private int GetSurroundingWallCount(int gridX, int gridY) {
         int wallCount = 0;
         for (int neighbourX = gridX - 1; neighbourX <= gridX + 1; neighbourX++) {
@@ -134,7 +137,7 @@ public class MapGenerator : MonoBehaviour {
         ConnectClosestRooms(survivingRooms);
     }
 
-    void ConnectClosestRooms(List<Room> allRooms, bool forceAccessibilityFromMainRoom = false) {
+    private void ConnectClosestRooms(List<Room> allRooms, bool forceAccessibilityFromMainRoom = false) {
 
         List<Room> roomListA = new List<Room>();
         List<Room> roomListB = new List<Room>();
@@ -204,9 +207,74 @@ public class MapGenerator : MonoBehaviour {
         }
     }
 
-    void CreatePassage(Room roomA, Room roomB, Coord tileA, Coord tileB) {
+    private void CreatePassage(Room roomA, Room roomB, Coord tileA, Coord tileB) {
         Room.ConnectRooms(roomA, roomB);
-        Debug.DrawLine(CoordToWorldPoint(tileA), CoordToWorldPoint(tileB), Color.green, 100);
+
+        List<Coord> line = GetLine(tileA, tileB);
+        foreach (Coord c in line) {
+            DrawCircle(c, 5);
+        }
+    }
+
+    private void DrawCircle(Coord c, int r) {
+        for (int x = -r; x <= r; x++) {
+            for (int y = -r; y <= r; y++) {
+                if(x*x + y*y <= r * r) {
+                    int drawX = c.tileX + x;
+                    int drawY = c.tileY + y;
+                    if(IsInMapRange(drawX, drawY)) {
+                        map[drawX, drawY] = 0;
+                    }
+                }
+            }
+        }
+    }
+
+    private List<Coord> GetLine(Coord from, Coord to) {
+        List<Coord> line = new List<Coord>();
+
+        int x = from.tileX;
+        int y = from.tileY;
+
+        int dx = to.tileX - from.tileX;
+        int dy = to.tileY - from.tileY;
+
+        bool inverted = false;
+        int step = Math.Sign(dx);
+        int gradientStep = Math.Sign(dy);
+
+        int longest = Mathf.Abs(dx);
+        int shortest = Mathf.Abs(dy);
+
+        if(longest <shortest) {
+            inverted = transform;
+            longest = Mathf.Abs(dy);
+            shortest = Mathf.Abs(dx);
+
+            step = Math.Sign(dy);
+            gradientStep = Math.Sign(dx);
+        }
+
+        int gradientAccumulation = longest / 2;
+        for (int i = 0; i < longest; i++) {
+            line.Add(new Coord(x, y));
+            if (inverted) {
+                y += step;
+            } else {
+                x += step;
+            }
+
+            gradientAccumulation += shortest;
+            if(gradientAccumulation >= longest) {
+                if(inverted) {
+                    x += gradientStep;
+                } else {
+                    y += gradientStep;
+                }
+                gradientAccumulation -= longest;
+            }
+        }
+        return line;
     }
 
     private Vector3 CoordToWorldPoint(Coord tile) {

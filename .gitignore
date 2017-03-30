@@ -28,3 +28,7 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+
+/AI/AI/Library
+/AI/GOAP/GOAP/Library
+AI/AI/Library/UnityAssemblies/UnityEditor.Graphs.dll
