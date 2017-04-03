@@ -4,5 +4,5 @@
 ### Klas: GDV2
 
 ## Documentatie
-Opdracht 1 (Boids): [a relative link](Boids.md)
-Opdracht 2 (Procedural: [a relative link](Procedural.md)
+Opdracht 1 (Boids): [Boids Opdracht](Boids.md) #br
+Opdracht 2 (Procedural): [Procedural Opdracht](Procedural.md)
