@@ -9,6 +9,8 @@ public class Controller2D : RaycastController {
     public CollisionInfo collisions;
 
     private Vector2 input;
+    private Vector2 moveAmount;
+
     public Vector2 Input {
         get { return input; }
     }
@@ -24,6 +26,7 @@ public class Controller2D : RaycastController {
     }
 
     public void Move(Vector2 moveAmount, Vector2 input, bool standingOnPlatform = false) {
+        this.moveAmount = moveAmount;
         UpdateRaycastOrigins();
 
         collisions.Reset();
@@ -42,9 +45,10 @@ public class Controller2D : RaycastController {
         if (moveAmount.y != 0) {
             VerticalCollisions(ref moveAmount);
         }
-        
+        Headbump();
         transform.Translate(moveAmount);
 
+        
 
         if (standingOnPlatform) {
             collisions.below = true;
@@ -112,6 +116,36 @@ public class Controller2D : RaycastController {
         return collisions.above;
     }
 
+    private void Headbump() {
+        float rayLength = SKIN_WIDTH;
+        for (int i = 0; i < verticalRayCount; i++) {
+            Vector2 rayOrigin = raycastOrigins.topLeft;
+            rayOrigin += Vector2.right * (verticalRaySpacing * i);
+            RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.up, rayLength, collisionMask);
+            Debug.DrawRay(rayOrigin, Vector2.up, Color.blue);
+
+            if (hit) {
+                collisions.above = true;
+                collisions.collisionObject = hit.collider.gameObject;
+                rayLength = hit.distance;
+            }
+        }
+    }
+
+    public bool CanWalk() {
+        float directionX = Mathf.Sign(moveAmount.x);
+        Vector2 rayOrigin = (directionX == -1) ? raycastOrigins.bottomLeft : raycastOrigins.bottomRight;
+        //Het spijt me voor deze code. PLS GOOI ME NIET VAN DE OPLEIDING
+        Debug.DrawRay(rayOrigin, (directionX == 1)? (Vector2.right + Vector2.down) : (Vector2.left + Vector2.down) * -directionX, Color.yellow);
+
+        RaycastHit2D hit = Physics2D.Raycast(rayOrigin, (directionX == 1) ? (Vector2.right + Vector2.down) : (Vector2.left + Vector2.down) * -directionX, 2, collisionMask);
+
+        if (hit || collisions.descendingSlope) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     private void VerticalCollisions(ref Vector2 moveAmount) {
         float directionY = Mathf.Sign(moveAmount.y);
         float rayLength = Mathf.Abs(moveAmount.y) + SKIN_WIDTH;

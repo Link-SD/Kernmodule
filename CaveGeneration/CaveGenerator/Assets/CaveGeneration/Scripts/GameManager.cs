@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour {
 	// Use this for initialization
 	void Awake () {
         mapGenerator.GenerateMap();
-        mapGenerator.PlacePlayerOnMap(playerPrefab);
+        
 	}
 	
 	// Update is called once per frame

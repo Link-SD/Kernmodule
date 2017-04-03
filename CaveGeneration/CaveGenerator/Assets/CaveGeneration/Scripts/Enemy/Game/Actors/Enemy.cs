@@ -9,6 +9,11 @@ public class Enemy : MonoBehaviour {
         get { return actor; }
     }
     private FiniteStateMachine fsm;
+    public FiniteStateMachine FSM {
+        get { return fsm; }
+    }
+
+
     private FieldOfView eyes;
     public FieldOfView Eyes {
         get { return eyes; }
@@ -41,6 +46,7 @@ public class Enemy : MonoBehaviour {
         if (actor.Controller.collisions.above && actor.Controller.collisions.collisionObject.tag == "Player") {
             Destroy(gameObject);
         }
+
 
 
         fsm.UpdateFSM();

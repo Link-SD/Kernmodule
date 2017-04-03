@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class FieldOfView : MonoBehaviour {
 
@@ -20,10 +21,13 @@ public class FieldOfView : MonoBehaviour {
 
     public float maskCutawayDst = .1f;
 
+    [HideInInspector]
+    public float focusedAngle = 0;
+
     private MeshFilter viewMeshFilter;
     Mesh viewMesh;
 
-    void Start() {
+    private void Start() {
         viewMesh = new Mesh();
         viewMeshFilter = GetComponentInChildren<MeshFilter>();
         viewMesh.name = "View Mesh";
@@ -33,18 +37,18 @@ public class FieldOfView : MonoBehaviour {
     }
 
 
-    IEnumerator FindTargetsWithDelay(float delay) {
+    private IEnumerator FindTargetsWithDelay(float delay) {
         while (true) {
             yield return new WaitForSeconds(delay);
             FindVisibleTargets();
         }
     }
 
-    void LateUpdate() {
+    private void LateUpdate() {
         DrawFieldOfView();
     }
 
-    void FindVisibleTargets() {
+    private void FindVisibleTargets() {
         visibleTargets.Clear();
         Collider2D[] targetsInViewRadius = Physics2D.OverlapCircleAll(transform.position, viewRadius, targetMask);
 
@@ -62,7 +66,11 @@ public class FieldOfView : MonoBehaviour {
         }
     }
 
-    void DrawFieldOfView() {
+    public void Focus() {
+        //TODO: Decrease the view angle to only the focused object.
+    }
+
+    private void DrawFieldOfView() {
         int stepCount = Mathf.RoundToInt(viewAngle * meshResolution);
         float stepAngleSize = viewAngle / stepCount;
         List<Vector3> viewPoints = new List<Vector3>();
@@ -120,8 +128,7 @@ public class FieldOfView : MonoBehaviour {
         viewMesh.RecalculateNormals();
     }
 
-
-    EdgeInfo FindEdge(ViewCastInfo minViewCast, ViewCastInfo maxViewCast) {
+    private EdgeInfo FindEdge(ViewCastInfo minViewCast, ViewCastInfo maxViewCast) {
         float minAngle = minViewCast.angle;
         float maxAngle = maxViewCast.angle;
         Vector3 minPoint = Vector3.zero;
@@ -143,8 +150,7 @@ public class FieldOfView : MonoBehaviour {
         return new EdgeInfo(minPoint, maxPoint);
     }
 
-
-    ViewCastInfo ViewCast(float globalAngle) {
+    private ViewCastInfo ViewCast(float globalAngle) {
         Vector3 dir = DirFromAngle(globalAngle, false);
         //RaycastHit hit;
         RaycastHit2D hit = Physics2D.Raycast(transform.position, dir, viewRadius, obstacleMask);
@@ -156,8 +162,6 @@ public class FieldOfView : MonoBehaviour {
             return new ViewCastInfo(false, transform.position + dir * viewRadius, viewRadius, globalAngle);
         }
     }
-
-
 
     public Vector3 DirFromAngle(float angleInDegrees, bool angleIsGlobal) {
         if (!angleIsGlobal) {

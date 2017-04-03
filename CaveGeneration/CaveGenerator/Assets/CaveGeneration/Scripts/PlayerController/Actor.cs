@@ -62,7 +62,7 @@ public class Actor : MonoBehaviour {
         maxJumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
         minJumpVelocity = Mathf.Sqrt(2 * Mathf.Abs(gravity) * minJumpHeight);
     }
-
+    
     private void Update() {
         CalculateVelocity();
         HandleWallSliding();
@@ -83,8 +83,7 @@ public class Actor : MonoBehaviour {
                 timer = 0;
             }
         }
-
-        HudManager.Instance.UpdateSliderValue(jetPackFuel);
+        
     }
 
     public void SetDirectionalInput(Vector2 input) {
@@ -125,17 +124,17 @@ public class Actor : MonoBehaviour {
     }
 
     public void OnJetPack() {
-
+       
         if (jetPackFuel > 0) {
             if (timer >= btnHoldTimer) {
                 gravity = 20;
                 jetPackFuel -= drainageRate * Time.deltaTime;
-
+              
             }
         }
+        
         timer += Time.deltaTime;
-
-
+        HudManager.Instance.UpdateSliderValue(jetPackFuel);
     }
 
     private void HandleWallSliding() {

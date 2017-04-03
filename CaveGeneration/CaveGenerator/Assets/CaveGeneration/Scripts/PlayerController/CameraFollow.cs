@@ -29,6 +29,10 @@ public class CameraFollow : MonoBehaviour {
 
     private void LateUpdate() {
 
+        if(target == null)
+            target = GameObject.FindWithTag("Player").GetComponent<Controller2D>();
+
+
         focusArea.Update(target.GetComponent<Collider2D>().bounds);
 
         Vector2 focusPosition = focusArea.center + Vector2.up * verticalOffset;

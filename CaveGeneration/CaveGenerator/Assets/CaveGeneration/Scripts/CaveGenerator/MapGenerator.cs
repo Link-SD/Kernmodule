@@ -13,6 +13,7 @@ public class MapGenerator : MonoBehaviour {
     //Prefabs
     public GameObject exitPrefab;
     public GameObject enemyPrefab;
+    public GameObject playerPrefab;
 
     [Range(0, 100)]
     public int randomFillPercent;
@@ -27,6 +28,8 @@ public class MapGenerator : MonoBehaviour {
     private GameObject playerObject = null;
 
     int i = 0;
+    
+
     private void Update() {
         if (Input.GetKeyDown(KeyCode.G)) {
             GenerateMap();
@@ -59,7 +62,7 @@ public class MapGenerator : MonoBehaviour {
                 }
             }
         }
-
+        
         MeshGenerator meshGen = GetComponent<MeshGenerator>();
         meshGen.GenerateMesh(borderedMap, 1);
     }
@@ -131,7 +134,7 @@ public class MapGenerator : MonoBehaviour {
         ConnectClosestRooms(survivingRooms);
 
         rooms = survivingRooms;
-
+        PlacePlayerOnMap(playerPrefab);
         PlaceExit(survivingRooms[survivingRooms.Count-1]);
         PlaceEnemies(rooms);
     }
@@ -141,11 +144,12 @@ public class MapGenerator : MonoBehaviour {
         for (int i = 0; i < enemies.Count; i++) {
             Destroy(enemies[i]);
         }
+        enemies.Clear();
         enemies = new List<GameObject>();
 
         foreach (Room room in rooms) {
-         //   GameObject e = Instantiate(enemyPrefab, CoordToWorldPoint(room.tiles[UnityEngine.Random.Range(15, room.tiles.Count - 10)]), Quaternion.identity);
-       //     enemies.Add(e);
+            GameObject e = Instantiate(enemyPrefab, CoordToWorldPoint(room.tiles[UnityEngine.Random.Range(15, room.tiles.Count - 10)]), Quaternion.identity);
+            enemies.Add(e);
         }
 
     }

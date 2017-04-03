@@ -29,6 +29,7 @@ public class HudManager : MonoBehaviour {
     }
 
     public void UpdateSliderValue(float value) {
+        
         value = value / 100;
         jetPackSlider.value = value;
     }
